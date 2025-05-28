@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Generator Link Gambar</title>
+<style>
+   body {
+     font-family: Arial, sans-serif;
+     padding: 20px;
+   }
+   input, button {
+     margin: 5px 0;
+     padding: 8px;
+     width: 100%;
+   }
+   .preview img {
+     max-width: 200px;
+     margin: 10px;
+     display: inline-block;
+   }
+   .generated-code {
+     white-space: pre-wrap;
+     background: #f9f9f9;
+     padding: 10px;
+     margin-top: 10px;
+     border: 1px solid #ccc;
+   }
+</style>
+</head>
+<body>
+<h2>Generator Link Upload Gambar</h2>
+<label>Link Gambar (contoh: https://is3.cloudhost.id/velanim/2025/05/Overgeared-ch18-01.jpg):</label>
+<input type="text" id="baseUrl" placeholder="Masukkan link gambar dengan nomor di akhir">
+<label>Jumlah Gambar:</label>
+<input type="number" id="jumlah" placeholder="Contoh: 15">
+<button onclick="generateLinks()">Generate Link</button>
+<button onclick="copyToClipboard()">Copy Semua Code</button>
+<h3>Preview:</h3>
+<div class="preview" id="preview"></div>
+<h3>Generated Code:</h3>
+<div class="generated-code" id="output"></div>
+<script>
+   function padNumber(num) {
+     return num.toString().padStart(2, '0');
+   }
+   function generateLinks() {
+     const baseUrl = document.getElementById('baseUrl').value;
+     const jumlah = parseInt(document.getElementById('jumlah').value, 10);
+     const outputDiv = document.getElementById('output');
+     const previewDiv = document.getElementById('preview');
+     outputDiv.textContent = '';
+     previewDiv.innerHTML = '';
+     const match = baseUrl.match(/^(.*?)(\d+)(\.jpg)$/i);
+     if (!match) {
+       alert('Format URL tidak valid. Harus ada angka di akhir sebelum .jpg');
+       return;
+     }
+     const [_, prefix, numberStr, suffix] = match;
+     const digitLength = numberStr.length;
+     let result = '';
+     for (let i = 1; i <= jumlah; i++) {
+       const nomor = i.toString().padStart(digitLength, '0');
+       const newUrl = `${prefix}${nomor}${suffix}`;
+       const altText = `chapter ${nomor}`;
+       const imgTag = `<img src="${newUrl}" class="object-cover mx-auto" alt="${altText}" decoding="async" fetchpriority="high" loading="eager">`;
+       result += imgTag + '\n';
+       const imgElement = document.createElement('img');
+       imgElement.src = newUrl;
+       imgElement.alt = altText;
+       imgElement.className = "object-cover mx-auto";
+       previewDiv.appendChild(imgElement);
+     }
+     outputDiv.textContent = result;
+   }
+   function copyToClipboard() {
+     const output = document.getElementById('output').textContent;
+     navigator.clipboard.writeText(output).then(() => {
+       alert('Kode berhasil disalin ke clipboard!');
+     }).catch(err => {
+       alert('Gagal menyalin: ' + err);
+     });
+   }
+</script>
+</body>
+</html>
