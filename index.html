@@ -45,15 +45,15 @@
 </head>
 <body>
   <h2>Generator Link Upload Gambar</h2>
-  <label>Link Gambar:</label>
+  <label>Link Gambar (contoh: https://is3.cloudhost.id/velanim/2025/05/Overgeared-ch18-01.png):</label>
   <input type="text" id="baseUrl" placeholder="Masukkan link gambar dengan nomor di akhir">
   
   <label>Jumlah Gambar:</label>
   <input type="number" id="jumlah" placeholder="Contoh: 15">
   
   <div>
-    <button onclick="generateLinks()">Generate Link</button>
-    <button onclick="copyToClipboard()">Copy Semua Code</button>
+    <button onclick="generateLinks()">🔁 Generate Link</button>
+    <button onclick="copyToClipboard()">📋 Copy Semua Code</button>
   </div>
 
   <h3>Preview:</h3>
@@ -64,7 +64,7 @@
 
   <script>
     function generateLinks() {
-      const baseUrl = document.getElementById('baseUrl').value;
+      const baseUrl = document.getElementById('baseUrl').value.trim();
       const jumlah = parseInt(document.getElementById('jumlah').value, 10);
       const outputDiv = document.getElementById('output');
       const previewDiv = document.getElementById('preview');
@@ -72,19 +72,20 @@
       outputDiv.textContent = '';
       previewDiv.innerHTML = '';
 
-      const match = baseUrl.match(/^(.*?)(\d+)(\.jpg)$/i);
+      // Match link dengan nomor di akhir dan ekstensi bebas (jpg, png, webp, dll)
+      const match = baseUrl.match(/^(.*?)(\d+)(\.\w{3,4})(\?.*)?$/i);
       if (!match) {
-        alert('Format URL tidak valid. Harus ada angka di akhir sebelum .jpg');
+        alert('Format URL tidak valid. Harus ada angka di akhir sebelum ekstensi (misalnya .jpg, .png, .webp)');
         return;
       }
 
-      const [_, prefix, numberStr, suffix] = match;
+      const [_, prefix, numberStr, extension, queryString = ''] = match;
       const digitLength = numberStr.length;
 
       let result = '';
       for (let i = 1; i <= jumlah; i++) {
         const nomor = i.toString().padStart(digitLength, '0');
-        const newUrl = `${prefix}${nomor}${suffix}`;
+        const newUrl = `${prefix}${nomor}${extension}${queryString}`;
         const altText = `chapter ${nomor}`;
         const imgTag = `<img src="${newUrl}" class="object-cover mx-auto" alt="${altText}" decoding="async" fetchpriority="high" loading="eager">`;
         result += imgTag + '\n';
